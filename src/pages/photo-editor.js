@@ -1,21 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import usePanZoom from "use-pan-and-zoom";
-
 import "../styles/photo-editor.scss";
 
-
 const PhotoEditor = () => {
-
   const [minX, setMinX] = useState(0)
   const [minY, setMinY] = useState(0)
   const [maxX, setMaxX] = useState(0)
   const [maxY, setMaxY] = useState(0)
-
-  const [imgWidth, setImgWidth] = useState(0)
-  const [imgHeight, setImgHeight] = useState(0)
-  const [containerHeight, setContainerHeight] = useState(0)
-  const [containerWidth, setContainerWidth] = useState(0)
 
   const { transform, panZoomHandlers, setZoom, container, setContainer } = usePanZoom({
     minX: minX,
@@ -27,8 +19,6 @@ const PhotoEditor = () => {
   const imageRef = useRef(null)
   const containerRef = useRef(null)
 
-  
-  
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
     useDropzone({
       maxFiles: 1,
@@ -45,69 +35,27 @@ const PhotoEditor = () => {
     />
   );
 
-  let position = ''
-  if (imageRef.current) {
-    position = imageRef.current.getBoundingClientRect()
-  }
-
-
-
-
   useEffect(() => {
-    if (container) {
-      console.log(container.offsetHeight);
-      console.log(container.offsetHeight / 4);
-    }
-    if (imageRef.current && containerRef.current) {
-      console.log(imageRef.current.getBoundingClientRect().width);
-      console.log(containerRef.current.getBoundingClientRect().width);
-      console.log(container.offsetWidth);
+    if (imageRef.current && containerRef.current) { //preventing null exception error
       if (imageRef.current.getBoundingClientRect().width > containerRef.current.getBoundingClientRect().width) {
-        console.log('width : img > container');
         setMaxX((imageRef.current.getBoundingClientRect().width - containerRef.current.getBoundingClientRect().width))
         setMinX(-(imageRef.current.getBoundingClientRect().width - containerRef.current.getBoundingClientRect().width))
       }
       else if (containerRef.current.getBoundingClientRect().width >= imageRef.current.getBoundingClientRect().width) {
-        console.log('width : containr >= img');
-        setMaxX(15)
-        setMinX(-15)
-        // setZoom(2)
+        setMaxX(10) // giving it a space of 10 to move on the y axis // it's not neccessary actually it should be 0
+        setMinX(-10) // same thing in opposite direction 
       }
 
       if (imageRef.current.getBoundingClientRect().height > containerRef.current.getBoundingClientRect().height) {
-        console.log('height : img > container');
-        // console.log(containerRef.current.getBoundingClientRect().height);
-        // console.log(containerHeight);
-        setMaxY(container.offsetHeight/6)
-        // console.log(containerRef.current.getBoundingClientRect());
-        setMinY(container.offsetHeight-(imageRef.current.getBoundingClientRect().height)-(container.offsetHeight/4))
-        console.log(container.offsetHeight/4);
-        // setZoom(2)
+        setMaxY(container.offsetHeight / 6)
+        setMinY(container.offsetHeight - (imageRef.current.getBoundingClientRect().height) - (container.offsetHeight / 4)) // centering the image's (minY) inside the container so whenever the height of container changes the image will be centered so it will appear in the same position of the mask
       }
       else if (containerRef.current.getBoundingClientRect().height >= imageRef.current.getBoundingClientRect().height) {
-        console.log('height : container >= img');
         setMaxY(imageRef.current.getBoundingClientRect().height - containerRef.current.getBoundingClientRect().height)
         setMinY(containerRef.current.getBoundingClientRect().height / 4)
       }
     }
-  }, [container, imageRef.current, maxX, maxY, containerRef.current])
-  // useEffect(() => {
-  //   if (container && imageRef.current) {
-  //     console.log((containerRef.current.offsetWidth));
-  //     console.log((imageRef.current.offsetWidth));
-  //     if ((containerRef.current.offsetWidth) / (imageRef.current.offsetWidth) > 1)
-  //       setMaxX((containerRef.current.offsetWidth) - (imageRef.current.offsetWidth))
-  //   }
-
-
-  // }, [container, position])
-  // useEffect(() => {
-  //   console.log(imageRef);
-  // }, [imageRef])
-
-
-
-
+  }, [container, imageRef, transform, imageRef.current, containerRef.current]) //i put transform in the dependencies even though i don't use it just to recalculate the state // the app would work fine if you removed it but if you uploaded another image the state will be calculated on the previous image
 
   return (
     <div className="App">

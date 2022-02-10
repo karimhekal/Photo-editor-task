@@ -35,7 +35,7 @@
     height: 0;
     width: 60%;
     padding-top: 66%;
-    margin: 8rem auto;
+    margin: 5px auto;
 
     @media screen and (max-width: 767.98px) {
       width: 60%;
@@ -104,6 +104,7 @@
   height:100px;
   background-color: white;
   border-radius: 20px;
-  margin: 20px;
+  margin-right: 20px;
+  margin-left: 20px;
   border-style: dotted;
 }

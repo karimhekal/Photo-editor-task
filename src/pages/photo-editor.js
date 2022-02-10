@@ -12,7 +12,7 @@ const PhotoEditor = () => {
   const [scaleY, setScaleY] = useState(1);
   const [rotateDegree, setRotate] = useState(0);
 
-  const { transform, panZoomHandlers, setZoom, container, setContainer } = usePanZoom({
+  const { transform, panZoomHandlers, container, setContainer } = usePanZoom({
     minX: minX,
     maxX: maxX,
     maxY: maxY,
@@ -51,15 +51,18 @@ const PhotoEditor = () => {
       }
 
       if (imageRef.current.getBoundingClientRect().height > containerRef.current.getBoundingClientRect().height) {
+        console.log('height : img>container ');
         setMaxY(container.offsetHeight / 6)
-        setMinY(container.offsetHeight - (imageRef.current.getBoundingClientRect().height) - (container.offsetHeight / 4)) // centering the image's (minY) inside the container so whenever the height of container changes the image will be centered so it will appear in the same position of the mask
+        setMinY(container.offsetHeight - (imageRef.current.getBoundingClientRect().height) - (container.offsetHeight / 8)) // centering the image's (minY) inside the container so whenever the height of container changes the image will be centered so it will appear in the same position of the mask
       }
       else if (containerRef.current.getBoundingClientRect().height >= imageRef.current.getBoundingClientRect().height) {
+        console.log('height : container>img ');
+       
         setMaxY(imageRef.current.getBoundingClientRect().height - containerRef.current.getBoundingClientRect().height)
         setMinY(containerRef.current.getBoundingClientRect().height / 4)
       }
     }
-  }, [container, imageRef, transform, imageRef.current, containerRef.current]) //i put transform in the dependencies even though i don't use it just to recalculate the state // the app would work fine if you removed it but if you uploaded another image the state will be calculated on the previous image
+  }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current, containerRef.current]) //i put transform in the dependencies even though i don't use it just to recalculate the state // the app would work fine if you removed it but if you uploaded another image the state will be calculated on the previous image
 
   return (
     <div className="App">
@@ -101,7 +104,7 @@ const PhotoEditor = () => {
       <div className="actions">
         <button onClick={() => setScaleX(-scaleX)}>Flip Horizontaly</button>
         <button onClick={() => setScaleY(-scaleY)}>Flip Verticaly</button>
-        <button onClick={() => setRotate(rotateDegree+90)}>Rotate 90 degrees</button>
+        <button onClick={() => setRotate(rotateDegree + 90)}>Rotate 90 degrees</button>
       </div>
     </div>
   );

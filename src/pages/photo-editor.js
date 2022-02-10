@@ -12,7 +12,6 @@ const PhotoEditor = () => {
   const [scaleY, setScaleY] = useState(1);
   const [rotateDegree, setRotate] = useState(0);
   const imageRef = useRef(null)
-  const containerRef = useRef(null)
 
   const { transform, panZoomHandlers, container, setContainer } = usePanZoom({
     minX: minX,
@@ -50,7 +49,7 @@ const PhotoEditor = () => {
       setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.2)
       setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.2)
     }
-  }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current, containerRef.current])
+  }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current])
 
   return (
     <div className="App">
@@ -58,7 +57,6 @@ const PhotoEditor = () => {
         <div
           className="photo-viewer">
           <div
-            ref={containerRef}
             style={{ display: 'flex' }}
           >
             <div

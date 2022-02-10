@@ -1,73 +1,69 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import usePanZoom from "use-pan-and-zoom";
 
 import "../styles/photo-editor.scss";
 
+
 const PhotoEditor = () => {
+
   const [minX, setMinX] = useState(0)
   const [minY, setMinY] = useState(0)
   const [maxX, setMaxX] = useState(0)
   const [maxY, setMaxY] = useState(0)
-  const { transform, panZoomHandlers, container, setContainer, center, pan } = usePanZoom({
-    initialZoom: 2,
-    // minX: -320 / 3,
-    // maxX: 320 / 3,
-    // minY: -160,
-    // maxY: (160),
-    minY: minY,
-    maxY: maxY,
+
+  const [imgWidth, setImgWidth] = useState(0)
+  const [imgHeight, setImgHeight] = useState(0)
+  const [containerHeight, setContainerHeight] = useState(0)
+  const [containerWidth, setContainerWidth] = useState(0)
+
+  const { transform, panZoomHandlers, setZoom, container, setContainer } = usePanZoom({
     minX: minX,
     maxX: maxX,
-
+    maxY: maxY,
+    minY: minY,
     enableZoom: false,
-    onPan: (touches, transform) => {
-      console.log('X : ' + transform.x);
-      console.log('Y : ' + transform.y);
-    }
   });
-
-
-  
   const imageRef = useRef(null)
-  const uploadedImgRef = useRef(null)
-  let position = ''
-  if (imageRef.current) {
-    position = imageRef.current.getBoundingClientRect()
+  const containerRef = useRef(null)
+
+  function getPositionAndDimensionsOfImage(el) {
+    if (!el) return;
+    let prevValue = JSON.stringify(el.getBoundingClientRect());
+    const start = Date.now();
+    const handle = setInterval(() => {
+      let nextValue = JSON.stringify(el.getBoundingClientRect());
+      if (nextValue === prevValue) {
+        setImgWidth(el.getBoundingClientRect().width)
+        setImgHeight(el.getBoundingClientRect().height)
+        clearInterval(handle);
+      } else {
+        prevValue = nextValue;
+      }
+
+    }, 100);
   }
-  let positionOfUploadedImg
-  if (uploadedImgRef.current) {
-    positionOfUploadedImg = uploadedImgRef.current.getBoundingClientRect()
+  function getPositionAndDimensionsOfContainer(el) {
+    if (!el) return;
+
+    let prevValue = JSON.stringify(el.getBoundingClientRect());
+    const start = Date.now();
+    const handle = setInterval(() => {
+      let nextValue = JSON.stringify(el.getBoundingClientRect());
+      if (nextValue === prevValue) {
+        clearInterval(handle);
+        setContainerWidth(el.getBoundingClientRect().width)
+        setContainerHeight(el.getBoundingClientRect().height)
+
+      } else {
+        prevValue = nextValue;
+        setContainerWidth(el.getBoundingClientRect().width)
+        setContainerHeight(el.getBoundingClientRect().height)
+
+      }
+
+    }, 100);
   }
-
-  useEffect(() => {
-    if (container) {
-      console.log('height : ' + container.offsetHeight);
-      console.log('width : ' + container.offsetWidth);
-      setMinY(-(container.offsetHeight) / 2)
-      setMaxY((container.offsetHeight) / 2)
-      setMinX((-container.offsetWidth / 2) / 3)
-      setMaxX((container.offsetWidth / 2) / 3)
-    }
-    // console.log(container);
-    // console.log(center.y);
-    // setMaxX(center.y+position.x)
-    // setMaxX(position.x - position.width)
-    // setMaxY(position.y + position.height)
-    // if (position.top) {
-    //   console.log('------- position of splash --------');
-    //   console.log('position');
-    //   console.log('top : ' + position.top);
-    //   console.log('bottom : ' + position.bottom);
-    //   console.log('height : ' + position.height);
-    //   console.log('------- positionOfUploadedImg ------');
-    //   console.log('top : ' + positionOfUploadedImg.top);
-    //   console.log('bottom : ' + positionOfUploadedImg.bottom);
-    //   console.log('height : ' + positionOfUploadedImg.height);
-    // }
-  }, [container,position, positionOfUploadedImg])
-
-
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
     useDropzone({
       maxFiles: 1,
@@ -77,11 +73,76 @@ const PhotoEditor = () => {
 
   const selectedImage = acceptedFiles.length > 0 && (
     <img
+      ref={imageRef}
       alt={acceptedFiles[0].name}
       key={acceptedFiles[0].path}
       src={URL.createObjectURL(acceptedFiles[0])}
     />
   );
+
+  let position = ''
+  if (imageRef.current) {
+    position = imageRef.current.getBoundingClientRect()
+  }
+
+
+
+
+  useEffect(() => {
+    if (container) {
+      console.log(container.offsetHeight);
+      console.log(container.offsetHeight / 4);
+    }
+    if (imageRef.current && containerRef.current) {
+      console.log(imageRef.current.getBoundingClientRect().width);
+      console.log(containerRef.current.getBoundingClientRect().width);
+      console.log(container.offsetWidth);
+      if (imageRef.current.getBoundingClientRect().width > containerRef.current.getBoundingClientRect().width) {
+        console.log('width : img > container');
+        setMaxX((imageRef.current.getBoundingClientRect().width - containerRef.current.getBoundingClientRect().width))
+        setMinX(-(imageRef.current.getBoundingClientRect().width - containerRef.current.getBoundingClientRect().width))
+      }
+      else if (containerRef.current.getBoundingClientRect().width >= imageRef.current.getBoundingClientRect().width) {
+        console.log('width : containr >= img');
+        setMaxX(15)
+        setMinX(-15)
+        // setZoom(2)
+      }
+
+      if (imageRef.current.getBoundingClientRect().height > containerRef.current.getBoundingClientRect().height) {
+        console.log('height : img > container');
+        // console.log(containerRef.current.getBoundingClientRect().height);
+        // console.log(containerHeight);
+        setMaxY(container.offsetHeight/6)
+        // console.log(containerRef.current.getBoundingClientRect());
+        setMinY(container.offsetHeight/8)
+        console.log(container.offsetHeight/4);
+        // setZoom(2)
+      }
+      else if (containerRef.current.getBoundingClientRect().height >= imageRef.current.getBoundingClientRect().height) {
+        console.log('height : container >= img');
+        setMaxY(imageRef.current.getBoundingClientRect().height - containerRef.current.getBoundingClientRect().height)
+        setMinY(containerRef.current.getBoundingClientRect().height / 4)
+      }
+    }
+  }, [container, imageRef.current, maxX, maxY, containerRef.current])
+  // useEffect(() => {
+  //   if (container && imageRef.current) {
+  //     console.log((containerRef.current.offsetWidth));
+  //     console.log((imageRef.current.offsetWidth));
+  //     if ((containerRef.current.offsetWidth) / (imageRef.current.offsetWidth) > 1)
+  //       setMaxX((containerRef.current.offsetWidth) - (imageRef.current.offsetWidth))
+  //   }
+
+
+  // }, [container, position])
+  // useEffect(() => {
+  //   console.log(imageRef);
+  // }, [imageRef])
+
+
+
+
 
   return (
     <div className="App">
@@ -89,8 +150,8 @@ const PhotoEditor = () => {
         <div
           className="photo-viewer">
           <div
-            ref={imageRef}
-
+            ref={containerRef}
+            style={{ display: 'flex' }}
           >
             <div
 
@@ -98,7 +159,9 @@ const PhotoEditor = () => {
               ref={(el) => setContainer(el)}
               {...panZoomHandlers}
             >
-              <div ref={uploadedImgRef} className="image-inner-container" style={{ transform }}>
+              <div
+                className="image-inner-container"
+                style={{ transform }}>
                 {selectedImage}
               </div>
             </div>

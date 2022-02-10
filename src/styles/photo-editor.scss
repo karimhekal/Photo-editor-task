@@ -44,12 +44,10 @@
     touch-action: none;
     position: absolute;
     top: 0;
-    // left: 0;
     height: 400px;
     width: 100%;
     overflow: hidden;
     cursor: grab;
-    // background-color: #000;
   }
 
   .image-outer-container:active {
@@ -63,7 +61,7 @@
     left: 0;
     height: 100%;
     width: 100%;
-    background-image: url(../assets/splash22.jpg);
+    background-image: url(../assets/splash.jpg);
     background-size: 100%;
     background-position: center;
     background-repeat: no-repeat;
@@ -81,8 +79,6 @@
   }
 
   .image-inner-container img {
-    // min-width: 100%;
-    // min-height: 100%;
     max-width: 100%;
     max-height: 100%;
   }

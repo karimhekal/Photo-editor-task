@@ -10,6 +10,7 @@ const PhotoEditor = () => {
   const [maxY, setMaxY] = useState(0)
   const [scaleX, setScaleX] = useState(1);
   const [scaleY, setScaleY] = useState(1);
+  const [rotateDegree, setRotate] = useState(0);
 
   const { transform, panZoomHandlers, setZoom, container, setContainer } = usePanZoom({
     minX: minX,
@@ -30,7 +31,7 @@ const PhotoEditor = () => {
 
   const selectedImage = acceptedFiles.length > 0 && (
     <img
-      style={{ transform: `scaleX(${scaleX}) scaleY(${scaleY})` }}
+      style={{ transform: `scaleX(${scaleX}) scaleY(${scaleY}) rotate(${rotateDegree}deg)` }}
       ref={imageRef}
       alt={acceptedFiles[0].name}
       key={acceptedFiles[0].path}
@@ -100,6 +101,7 @@ const PhotoEditor = () => {
       <div className="actions">
         <button onClick={() => setScaleX(-scaleX)}>Flip Horizontaly</button>
         <button onClick={() => setScaleY(-scaleY)}>Flip Verticaly</button>
+        <button onClick={() => setRotate(rotateDegree+90)}>Rotate 90 degrees</button>
       </div>
     </div>
   );

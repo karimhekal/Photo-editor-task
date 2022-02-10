@@ -12,6 +12,11 @@ const PhotoEditor = () => {
   const [maxX, setMaxX] = useState(0)
   const [maxY, setMaxY] = useState(0)
 
+  const [imgWidth, setImgWidth] = useState(0)
+  const [imgHeight, setImgHeight] = useState(0)
+  const [containerHeight, setContainerHeight] = useState(0)
+  const [containerWidth, setContainerWidth] = useState(0)
+
   const { transform, panZoomHandlers, setZoom, container, setContainer } = usePanZoom({
     minX: minX,
     maxX: maxX,
@@ -22,6 +27,8 @@ const PhotoEditor = () => {
   const imageRef = useRef(null)
   const containerRef = useRef(null)
 
+  
+  
   const { acceptedFiles, getRootProps, getInputProps, isDragActive } =
     useDropzone({
       maxFiles: 1,
@@ -38,8 +45,19 @@ const PhotoEditor = () => {
     />
   );
 
+  let position = ''
+  if (imageRef.current) {
+    position = imageRef.current.getBoundingClientRect()
+  }
+
+
+
 
   useEffect(() => {
+    if (container) {
+      console.log(container.offsetHeight);
+      console.log(container.offsetHeight / 4);
+    }
     if (imageRef.current && containerRef.current) {
       console.log(imageRef.current.getBoundingClientRect().width);
       console.log(containerRef.current.getBoundingClientRect().width);
@@ -51,20 +69,44 @@ const PhotoEditor = () => {
       }
       else if (containerRef.current.getBoundingClientRect().width >= imageRef.current.getBoundingClientRect().width) {
         console.log('width : containr >= img');
-        setMaxX(15) // to give some space to move the image on the y axis
-        setMinX(-15) 
+        setMaxX(15)
+        setMinX(-15)
+        // setZoom(2)
       }
 
       if (imageRef.current.getBoundingClientRect().height > containerRef.current.getBoundingClientRect().height) {
+        console.log('height : img > container');
+        // console.log(containerRef.current.getBoundingClientRect().height);
+        // console.log(containerHeight);
         setMaxY(container.offsetHeight/6)
-        setMinY(container.offsetHeight/8)
+        // console.log(containerRef.current.getBoundingClientRect());
+        setMinY(container.offsetHeight-(imageRef.current.getBoundingClientRect().height)-(container.offsetHeight/4))
+        console.log(container.offsetHeight/4);
+        // setZoom(2)
       }
       else if (containerRef.current.getBoundingClientRect().height >= imageRef.current.getBoundingClientRect().height) {
+        console.log('height : container >= img');
         setMaxY(imageRef.current.getBoundingClientRect().height - containerRef.current.getBoundingClientRect().height)
         setMinY(containerRef.current.getBoundingClientRect().height / 4)
       }
     }
-  }, [container, imageRef.current, containerRef.current])
+  }, [container, imageRef.current, maxX, maxY, containerRef.current])
+  // useEffect(() => {
+  //   if (container && imageRef.current) {
+  //     console.log((containerRef.current.offsetWidth));
+  //     console.log((imageRef.current.offsetWidth));
+  //     if ((containerRef.current.offsetWidth) / (imageRef.current.offsetWidth) > 1)
+  //       setMaxX((containerRef.current.offsetWidth) - (imageRef.current.offsetWidth))
+  //   }
+
+
+  // }, [container, position])
+  // useEffect(() => {
+  //   console.log(imageRef);
+  // }, [imageRef])
+
+
+
 
 
   return (

@@ -52,7 +52,7 @@ const PhotoEditor = () => {
 
       if (imageRef.current.getBoundingClientRect().height > containerRef.current.getBoundingClientRect().height) {
         setMaxY(container.offsetHeight / 6)
-        setMinY(container.offsetHeight - (imageRef.current.getBoundingClientRect().height) - (container.offsetHeight / 8)) // centering the image's (minY) inside the container so whenever the height of container changes the image will be centered so it will appear in the same position of the mask
+        setMinY(container.offsetHeight - (imageRef.current.getBoundingClientRect().height) - (container.offsetHeight / 10)) // centering the image's (minY) inside the container so whenever the height of container changes the image will be centered so it will appear in the same position of the mask
       }
       else if (containerRef.current.getBoundingClientRect().height >= imageRef.current.getBoundingClientRect().height) {
         setMaxY(imageRef.current.getBoundingClientRect().height - containerRef.current.getBoundingClientRect().height)

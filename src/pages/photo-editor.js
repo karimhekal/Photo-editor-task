@@ -42,12 +42,12 @@ const PhotoEditor = () => {
     if (imageRef.current && container) { //preventing null exception error
       const containerWidth = container.offsetWidth;
       const imageWidth = imageRef.current.getBoundingClientRect().width;
-      setMinX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 - imageWidth * 0.2)
+      setMinX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 - imageWidth * 0.1)
       setMaxX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 + imageWidth * 0.05)
       const containerHeight = container.offsetHeight;
       const imageHeight = imageRef.current.getBoundingClientRect().height;
-      setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.2)
-      setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.2)
+      setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.1)
+      setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.1)
     }
   }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current])
 

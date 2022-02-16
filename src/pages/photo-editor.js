@@ -1,19 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import usePanZoom from "use-pan-and-zoom";
+import { exportAsImage } from "../functions/exportAsImage";
 import "../styles/photo-editor.scss";
 
+
+let swtch = false;
 const PhotoEditor = () => {
   const [minX, setMinX] = useState()
   const [minY, setMinY] = useState()
   const [maxX, setMaxX] = useState()
   const [maxY, setMaxY] = useState()
+  const [swt, setSwt] = useState(false)
+
+  const [scalePercentage, setScalePercentage] = useState(100);
   const [scaleX, setScaleX] = useState(1);
   const [scaleY, setScaleY] = useState(1);
   const [rotateDegree, setRotate] = useState(0);
   const imageRef = useRef(null)
 
-  const { transform, panZoomHandlers, container, setContainer } = usePanZoom({
+  const { transform, setZoom, panZoomHandlers, container, setContainer } = usePanZoom({
     minX: minX,
     maxX: maxX,
     maxY: maxY,
@@ -37,22 +43,44 @@ const PhotoEditor = () => {
       src={URL.createObjectURL(acceptedFiles[0])}
     />
   );
-
   useEffect(() => {
     if (imageRef.current && container) { //preventing null exception error
+
       const containerWidth = container.offsetWidth;
       const imageWidth = imageRef.current.getBoundingClientRect().width;
-      setMinX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 - imageWidth * 0.1)
-      setMaxX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 + imageWidth * 0.05)
+
       const containerHeight = container.offsetHeight;
       const imageHeight = imageRef.current.getBoundingClientRect().height;
-      setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.1)
-      setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.1)
+
+
+      if (containerHeight < imageHeight) {
+        console.log('container < image   height');
+        console.log(imageHeight);
+        console.log(containerHeight);
+        setMinX((imageWidth - containerWidth - imageWidth * 0.1))
+        setMaxX((imageWidth - containerWidth + imageWidth * 0.1))
+        setMinY(-(imageHeight - containerHeight) - containerHeight * 0.1)
+        setMaxY(-(imageHeight - containerHeight) + (imageHeight - containerHeight) + containerHeight * 0.1)
+      }
+      else if (containerHeight > imageHeight) {
+        console.log('image < container   height');
+
+        setMinX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 - imageWidth * 0.05)
+        setMaxX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 + imageWidth * 0.05)
+
+        setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.1)
+        setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.1)
+
+      }
+      console.log(imageWidth)
+      console.log(containerWidth);
+      console.log(minX);
     }
   }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current])
 
+  const captureRef = useRef();
   return (
-    <div className="App">
+    <div className="App" ref={captureRef} >
       <div className="photo-editor">
         <div
           className="photo-viewer">
@@ -90,7 +118,7 @@ const PhotoEditor = () => {
       <div className="actions">
         <button onClick={() => setScaleX(-scaleX)}>Flip Horizontaly</button>
         <button onClick={() => setScaleY(-scaleY)}>Flip Verticaly</button>
-        <button onClick={() => setRotate(rotateDegree + 90)}>Rotate 90 degrees</button>
+        {/* <button onClick={() => setRotate(rotateDegree + 90)}>Rotate 90 degrees</button> */}
       </div>
     </div>
   );

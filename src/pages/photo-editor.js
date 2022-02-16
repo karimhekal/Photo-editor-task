@@ -11,13 +11,11 @@ const PhotoEditor = () => {
   const [minY, setMinY] = useState()
   const [maxX, setMaxX] = useState()
   const [maxY, setMaxY] = useState()
-  const [swt, setSwt] = useState(false)
 
   const [scalePercentageWidth, setScalePercentageWidth] = useState(100);
   const [scalePercentageHeight, setScalePercentageHeight] = useState(200);
   const [scaleX, setScaleX] = useState(1);
   const [scaleY, setScaleY] = useState(1);
-  const [rotateDegree, setRotate] = useState(0);
   const imageRef = useRef(null)
 
   const { transform, setZoom, panZoomHandlers, container, setContainer } = usePanZoom({
@@ -37,7 +35,7 @@ const PhotoEditor = () => {
 
   const selectedImage = acceptedFiles.length > 0 && (
     <img
-      style={{ maxWidth: `${scalePercentageWidth}%`, maxHeight: `${scalePercentageHeight}%`, transform: `scaleX(${scaleX}) scaleY(${scaleY}) rotate(${rotateDegree}deg)` }}
+      style={{ maxWidth: `${scalePercentageWidth}%`, maxHeight: `${scalePercentageHeight}%`, transform: `scaleX(${scaleX}) scaleY(${scaleY})` }}
       ref={imageRef}
       alt={acceptedFiles[0].name}
       key={acceptedFiles[0].path}
@@ -75,7 +73,7 @@ const PhotoEditor = () => {
       console.log(containerWidth);
       console.log(minX);
     }
-  }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current])
+  }, [container, scaleX, scaleY, imageRef, transform, imageRef.current])
 
 
   function setZoomPercentage() {

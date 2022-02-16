@@ -13,7 +13,8 @@ const PhotoEditor = () => {
   const [maxY, setMaxY] = useState()
   const [swt, setSwt] = useState(false)
 
-  const [scalePercentage, setScalePercentage] = useState(100);
+  const [scalePercentageWidth, setScalePercentageWidth] = useState(100);
+  const [scalePercentageHeight, setScalePercentageHeight] = useState(200);
   const [scaleX, setScaleX] = useState(1);
   const [scaleY, setScaleY] = useState(1);
   const [rotateDegree, setRotate] = useState(0);
@@ -36,7 +37,7 @@ const PhotoEditor = () => {
 
   const selectedImage = acceptedFiles.length > 0 && (
     <img
-      style={{ transform: `scaleX(${scaleX}) scaleY(${scaleY}) rotate(${rotateDegree}deg)` }}
+      style={{ maxWidth: `${scalePercentageWidth}%`, maxHeight: `${scalePercentageHeight}%`, transform: `scaleX(${scaleX}) scaleY(${scaleY}) rotate(${rotateDegree}deg)` }}
       ref={imageRef}
       alt={acceptedFiles[0].name}
       key={acceptedFiles[0].path}
@@ -57,17 +58,15 @@ const PhotoEditor = () => {
         console.log('container < image   height');
         console.log(imageHeight);
         console.log(containerHeight);
-        setMinX((imageWidth - containerWidth - imageWidth * 0.1))
-        setMaxX((imageWidth - containerWidth + imageWidth * 0.1))
+        setMinX(-(imageWidth - containerWidth) - containerWidth * 0.1)
+        setMaxX(-(imageWidth - containerWidth) + (imageWidth - containerWidth) + containerWidth * 0.1)
         setMinY(-(imageHeight - containerHeight) - containerHeight * 0.1)
         setMaxY(-(imageHeight - containerHeight) + (imageHeight - containerHeight) + containerHeight * 0.1)
       }
       else if (containerHeight > imageHeight) {
         console.log('image < container   height');
-
         setMinX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 - imageWidth * 0.05)
         setMaxX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 + imageWidth * 0.05)
-
         setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.1)
         setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.1)
 
@@ -78,6 +77,22 @@ const PhotoEditor = () => {
     }
   }, [container, scaleX, scaleY, rotateDegree, imageRef, transform, imageRef.current])
 
+
+  function setZoomPercentage() {
+    if (scalePercentageWidth === 100) {
+      setScalePercentageWidth(200)
+    }
+    else if (scalePercentageWidth === 200) {
+      setScalePercentageWidth(100)
+    }
+    if (scalePercentageHeight === 200 && (imageRef.current.getBoundingClientRect().width / container.width) > 0.8) {
+      setScalePercentageHeight(100)
+    }
+    else if (scalePercentageHeight === 100) {
+      setScalePercentageHeight(200)
+    }
+
+  }
   const captureRef = useRef();
   return (
     <div className="App" ref={captureRef} >
@@ -118,6 +133,7 @@ const PhotoEditor = () => {
       <div className="actions">
         <button onClick={() => setScaleX(-scaleX)}>Flip Horizontaly</button>
         <button onClick={() => setScaleY(-scaleY)}>Flip Verticaly</button>
+        <button onClick={() => setZoomPercentage()}>Zoom in / out</button>
         {/* <button onClick={() => setRotate(rotateDegree + 90)}>Rotate 90 degrees</button> */}
       </div>
     </div>

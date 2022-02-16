@@ -1,11 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import usePanZoom from "use-pan-and-zoom";
-import { exportAsImage } from "../functions/exportAsImage";
 import "../styles/photo-editor.scss";
 
-
-let swtch = false;
 const PhotoEditor = () => {
   const [minX, setMinX] = useState()
   const [minY, setMinY] = useState()
@@ -18,7 +15,7 @@ const PhotoEditor = () => {
   const [scaleY, setScaleY] = useState(1);
   const imageRef = useRef(null)
 
-  const { transform, setZoom, panZoomHandlers, container, setContainer } = usePanZoom({
+  const { transform, panZoomHandlers, container, setContainer } = usePanZoom({
     minX: minX,
     maxX: maxX,
     maxY: maxY,
@@ -57,16 +54,16 @@ const PhotoEditor = () => {
         console.log(imageHeight);
         console.log(containerHeight);
         setMinX(-(imageWidth - containerWidth) - containerWidth * 0.1)
-        setMaxX(-(imageWidth - containerWidth) + (imageWidth - containerWidth) + containerWidth * 0.1)
+        setMaxX(-(imageWidth - containerWidth) + (imageWidth - containerWidth) + containerWidth * 0.05)
         setMinY(-(imageHeight - containerHeight) - containerHeight * 0.1)
-        setMaxY(-(imageHeight - containerHeight) + (imageHeight - containerHeight) + containerHeight * 0.1)
+        setMaxY(-(imageHeight - containerHeight) + (imageHeight - containerHeight) + containerHeight * 0.05)
       }
       else if (containerHeight > imageHeight) {
         console.log('image < container   height');
         setMinX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 - imageWidth * 0.05)
         setMaxX(containerWidth - imageWidth - (containerWidth - imageWidth) * 0.5 + imageWidth * 0.05)
-        setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.1)
-        setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.1)
+        setMinY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 - imageHeight * 0.05)
+        setMaxY(containerHeight - imageHeight - (containerHeight - imageHeight) * 0.5 + imageHeight * 0.05)
 
       }
       console.log(imageWidth)
